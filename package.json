@@ -1,0 +1,32 @@
+{
+  "name": "project-3",
+  "version": "1.0.0",
+  "description": "A web app to crowdsource answering questions",
+  "main": "app.js",
+  "scripts": {
+    "build": "babel ./client --out-file ./hosted/compiled.js",
+    "watch": "babel --watch ./client --out-file ./hosted/compiled.js",
+    "nodemon": "nodemon --watch ./server ./server/app.js",
+    "start": "node ./server/app.js",
+    "pretest": "eslint ./server --fix",
+    "test": "echo \"Tests complete\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LegendaryBaddie/project3.git"
+  },
+  "author": "Austin White",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/LegendaryBaddie/project3/issues"
+  },
+  "homepage": "https://github.com/LegendaryBaddie/project3#readme",
+  "dependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "^1.6.1",
+    "eslint": "^4.11.0",
+    "eslint-config-airbnb": "^16.1.0",
+    "eslint-plugin-import": "^2.8.0",
+    "nodemon": "^1.12.1"
+  }
+}
