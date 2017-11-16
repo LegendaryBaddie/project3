@@ -2,7 +2,7 @@ const path = require('path');
 const express = require('express');
 const socketio = require('socket.io');
 const handlebars = require('express-handlebars');
-const http = require('http')
+const http = require('http');
 const sockets = require('./sockets.js');
 const router = require('./router.js');
 
