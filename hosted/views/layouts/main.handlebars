@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+  <html lang="en"> 
+  <head>
+  <title>App</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script src="https://code.jquery.com/jquery-2.1.3.min.js"></script>
+  </head>
+  <body>
+    <nav id="fixed-top">
+      {{#if account}}
+      {{else}}
+         <section id="login">
+            <form id="loginForm" name="loginForm" action="/login" method="POST" class="mainForm">
+              <label for="username">Username: </label>
+              <input id="user" type="text" name="username" placeholder="username"/>
+              <label for="pass">Password: </label>
+              <input id="pass" type="password" name="pass" placeholder="password"/>
+              <input type="hidden" name="_csrf" value={{csrfToken}} />
+              <a id="loginSubmit" href="#" class="formSubmit">Sign in</a>
+            </form>
+            <a href="signup">Sign up</a>
+          </section>
+      {{/if}}
+    </nav>
+    <div id="side-capsule">
+      <div class="chat-tab" id="test-tab"><h2>Test</h2></div>
+      <div class="chat-tab" id="second-tab"><h2>Test</h2></div>
+      <div id="queue-box"><h1>Number in Queue placeholder</h1>
+      <p>This is also where the button to ask a question will be</p>
+      </div>
+    </div>
+    {{{body}}}
+  </body>
+  
+  <script src="/assets/js/compiled.js"></script>
+  </html>
