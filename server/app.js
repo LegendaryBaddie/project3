@@ -53,7 +53,9 @@ app.use(session({
   resave: true,
   saveUninitialized: true,
 }));
-app.engine('handlebars', handlebars({defaultLayout: path.resolve(`${__dirname}/../hosted/views/layouts/main`)}));
+app.engine('handlebars', handlebars({
+  defaultLayout: path.resolve(`${__dirname}/../hosted/views/layouts/main`),
+}));
 app.set('view engine', 'handlebars');
 app.set('views', path.resolve(`${__dirname}/../hosted/views`));
 app.disable('x-powered-by');
@@ -64,13 +66,15 @@ app.use((err, req, res, next) => {
 
   return false;
 });
-const io = socketio(http.createServer(app));
+const server = http.createServer(app);
+const io = socketio(server);
+
 
 router(app);
 
 sockets.setupSockets(io);
 
-app.listen(PORT, (err) => {
+server.listen(PORT, (err) => {
   if (err) {
     throw err;
   }

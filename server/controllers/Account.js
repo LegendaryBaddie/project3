@@ -13,10 +13,10 @@ const logout = (req, res) => {
 const login = (request, response) => {
     const req = request;
     const res = response;
-  
+    
     const username = `${req.body.username}`;
-    const password = `${req.body.pass}`;
-  
+    const password = `${req.body.password}`;
+    
     if (!username || !password) {
       return res.status(400).json({ error: 'All fields are required' });
     }
@@ -46,7 +46,7 @@ const signup = (request, response) => {
     return Account.AccountModel.generateHash(req.body.pass, (salt, hash) => {
       const accountData = {
         username: req.body.username,
-        salt,
+        salt: salt,
         password: hash,
       };
   
@@ -60,7 +60,7 @@ const signup = (request, response) => {
   
         req.session.account = Account.AccountModel.toAPI(newAccount);
         // redirect to current button creation/ownership page
-        return res.json({ redirect: '/' });
+        return res.redirect('/');
       });
     });
 };

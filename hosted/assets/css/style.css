@@ -30,21 +30,46 @@ body{
     background:lightgray;
     box-shadow:inset 0px 0px 10px 1px black;
 }
-#test-tab{
+#math{
     background:palevioletred;
 }
-#second-tab{
+#code{
     background: paleturquoise;
+}
+#science{
+    background: palegoldenrod;
 }
 .chat-tab{
     width:35%;
     padding:10px 0px 10px 0px;
     position:relative;
     display:block;
-    left:65%;
+    left:75%;
     border-radius:25px 0px 0px 25px;
     box-shadow: 0px 5px 10px -5px black;
     text-align: center;
+    transition: z-index 1s, left 1s, width 1s;
+    cursor: pointer;
+}
+.chat-tab:hover{
+    z-index: 2;
+    left:65%;
+    width: 35%
+}
+.chat-tab:active{
+    left:60%;
+    width: 40%;
+}
+.active{
+    left: 60%;
+    width: 40%;
+}
+#chat-Toggle{
+    display:none;
+    transition: display 3s;
+}
+#instru-Toggle{
+    transition: display 3s;
 }
 main{
     position:absolute;
@@ -54,7 +79,8 @@ main{
     left:20%;
     top:10%;
     box-shadow: 0px 0px 10px 1px black;
-    z-index: 1;
+    background:white;
+    z-index: 10;
 }
 #clock-container{
     position:absolute;

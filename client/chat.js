@@ -31,12 +31,34 @@ const updateClock = () => {
     $('#clock').html(`${minutes}:${seconds}`);
 }
 
+const changeRoom = (room) => {
+     //check if the clicked room is already active
+     if($(`#${room}`).hasClass('active')){
+         return;
+     }
+     //change clicked room to active and remove active on all other
+     $('#math').removeClass('active');
+     $('#code').removeClass('active');
+     $('#science').removeClass('active');
+ 
+     $(`#${room}`).addClass('active');
+    
+     // add user to the chat room and load different partial
+
+     socket.emit('joinRoom', room);
+     $('#chat-Toggle').css('display', 'initial');
+     $('#instruc-toggle').css('display', 'none');
+ }
+
 $('#true-message-field').focusin((e) => {
     $('#true-message-field').keypress((e)=>{
         if(e.which === 13) {
-            data.message = $('#true-message-field').val();
+            let data = {
+                message: $('#true-message-field').val(),
+                name: account
+            };
             $('#true-message-field').val("");
-            onMessage(data);
+            socket.emit('newMessage', data);
         }
     });
 });

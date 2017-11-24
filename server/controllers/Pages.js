@@ -1,7 +1,27 @@
 const index = (req, res) => {
-  res.render('index', {
-    csrfToken: req.csrfToken()
-  });
+  if(!req.session.account) {
+    return res.render('index', {
+      csrfToken: req.csrfToken(),
+    });
+  }
+    return res.render('index', {
+      csrfToken: req.csrfToken(),
+      account: req.session.account,
+    });
+
+};
+const chat = (req, res) => {
+  if(!req.session.account) {
+    return res.render('index', {
+      csrfToken: req.csrfToken()
+    });
+  }
+    return res.render('chat', {
+      csrfToken: req.csrfToken(),
+      account: JSON.stringify(req.session.account.username),
+    });
+
 };
 
 module.exports.index = index;
+module.exports.chat = chat;

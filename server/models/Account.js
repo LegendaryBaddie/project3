@@ -24,7 +24,7 @@ const AccountSchema = new mongoose.Schema({
     merits: {
         type: Number,
         default: 0
-    }
+    },
     salt: {
       type: Buffer,
       required: true,
