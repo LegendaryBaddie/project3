@@ -1,12 +1,51 @@
 const xxh = require('xxhashjs');
-
+const msg = require('./classes/message.js');
 let io;
 
 const rooms = {
-    math: [],
-    code: [],
-    science: []
+    math: {
+        messages: {}
+    },
+    code: {
+        messages: {}
+    },
+    science: {
+        messages: {}
+    }
 };
+
+const appendRooms = (room, socket) => {
+    switch (room) {
+        case 'math':
+            rooms.math[socket.hash] = socket;
+            break;
+        case 'code':
+            rooms.code[socket.hash] = socket;
+            break;
+        case 'science':
+            rooms.science[socket.hash] = socket;
+            break;
+        default :
+            console.log(`Error appending attepted: ${room}`);
+            break;
+    }
+}
+const leaveRooms = (room, socket) => {
+    switch (room) {
+        case 'math':
+            delete rooms.math[socket.hash];
+            break;
+        case 'code':
+            delete rooms.code[socket.hash];
+            break;
+        case 'science':
+            delete rooms.science[socket.hash];
+            break;
+        default :
+            console.log(`Error deleting attepted: ${room}`);
+            break;
+    }
+}
 
 const setupSockets = (ioServer) => {
     io = ioServer;
@@ -20,8 +59,10 @@ const setupSockets = (ioServer) => {
             if(!socket.room){
                 socket.room = room;
                 socket.join(room);
+                appendRooms(room, socket);
             }else{
                 socket.leave(room);
+                leaveRooms(room, socket);
                 socket.room = room;
                 socket.join(room);
                 //maybe check for messages in room and add them in
@@ -30,7 +71,24 @@ const setupSockets = (ioServer) => {
         });
         
         socket.on('newMessage', (data) => {
-            
+            //create unique id for the message
+            const messageID = xxh.h32(`${data.name}${new Date().getTime()}`, 0xBABEFACE).toString(16);
+            switch(socket.room){
+                case 'math':
+                    rooms.math.messages[messageID] = new msg.Message(data.name, data.message, messageID);
+                    io.to(socket.room).emit('msgFromServer', rooms.math.messages[messageID].toOBJ());
+                    break;
+                case 'code':
+                    rooms.code.messages[messageID] = new msg.Message(data.name, data.message, messageID);
+                    io.to(socket.room).emit('msgFromServer', rooms.code.messages[messageID].toOBJ());
+                    break;
+                case 'science':
+                    rooms.science.messages[messageID] = new msg.Message(data.name, data.message, messageID);
+                    io.to(socket.room).emit('msgFromServer', rooms.science.messages[messageID].toOBJ());
+                    break;
+                default:
+                    console.log('message error');
+            }
         });
     });
 };

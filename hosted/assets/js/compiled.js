@@ -57,9 +57,10 @@ $(document).ready(function () {
 'use strict';
 
 var onMessage = function onMessage(data) {
-    var message = '<h3>' + data.userName + '</h3>';
-    message += '<p>' + data.message + '</p>';
+    var message = '<h3>' + data.name + '</h3>';
+    message += '<p>' + data.content + '</p>';
     $('#chat-container').append('<div class=message>' + message + '</div>');
+    messages[data.id] = data;
 };
 
 var newTimer = function newTimer(length) {
@@ -110,7 +111,7 @@ var changeRoom = function changeRoom(room) {
 
 $('#true-message-field').focusin(function (e) {
     $('#true-message-field').keypress(function (e) {
-        if (e.which === 13) {
+        if (e.which === 13 && $('#true-message-field').val() !== '') {
             var data = {
                 message: $('#true-message-field').val(),
                 name: account
@@ -129,16 +130,23 @@ var data = {
 };
 var timer = void 0;
 var clock = 0;
-/*
-const init = () =>{
+var socket = void 0;
+var messages = {};
+
+var init = function init() {
     socket = io.connect();
-    socket.on('incomingM', onMessage);
-    $('#math').click(()=>{changeRoom('math')});
-    $('#code').click(()=>{changeRoom('code')});
-    $('#science').click(()=>{changeRoom('science')});
-}
+    socket.on('msgFromServer', onMessage);
+    $('#math').click(function () {
+        changeRoom('math');
+    });
+    $('#code').click(function () {
+        changeRoom('code');
+    });
+    $('#science').click(function () {
+        changeRoom('science');
+    });
+};
 
 //setInterval(() =>{onMessage(data)}, 5000);
 
 $(document).ready(init);
-*/

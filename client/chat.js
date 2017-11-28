@@ -1,7 +1,8 @@
 const onMessage = (data) => {
-    let message = `<h3>${data.userName}</h3>`;
-    message += `<p>${data.message}</p>`;
+    let message = `<h3>${data.name}</h3>`;
+    message += `<p>${data.content}</p>`;
     $('#chat-container').append(`<div class=message>${message}</div>`);
+    messages[data.id]= data;
 } 
 
 const newTimer = (length) => {
@@ -52,7 +53,7 @@ const changeRoom = (room) => {
 
 $('#true-message-field').focusin((e) => {
     $('#true-message-field').keypress((e)=>{
-        if(e.which === 13) {
+        if(e.which === 13 && $('#true-message-field').val()!=='') {
             let data = {
                 message: $('#true-message-field').val(),
                 name: account

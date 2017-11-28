@@ -5,10 +5,12 @@ let data = {
 }
 let timer;
 let clock = 0;
-/*
+let socket;
+let messages = {};
+
 const init = () =>{
     socket = io.connect();
-    socket.on('incomingM', onMessage);
+    socket.on('msgFromServer', onMessage);
     $('#math').click(()=>{changeRoom('math')});
     $('#code').click(()=>{changeRoom('code')});
     $('#science').click(()=>{changeRoom('science')});
@@ -17,4 +19,3 @@ const init = () =>{
 //setInterval(() =>{onMessage(data)}, 5000);
 
 $(document).ready(init);
-*/

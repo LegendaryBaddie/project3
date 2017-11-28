@@ -6,7 +6,7 @@ const index = (req, res) => {
   }
     return res.render('index', {
       csrfToken: req.csrfToken(),
-      account: req.session.account,
+      account: JSON.stringify(req.session.account.username),
     });
 
 };
