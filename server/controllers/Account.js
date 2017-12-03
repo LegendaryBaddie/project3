@@ -28,7 +28,7 @@ const login = (request, response) => {
   
       req.session.account = Account.AccountModel.toAPI(account);
       // redirect to current button creation/ownership page
-      return res.json({ redirect: '/' });
+      return res.json({ redirect: '/chat' });
     });
 };
 const signup = (request, response) => {

@@ -62,7 +62,19 @@ var onMessage = function onMessage(data) {
     $('#chat-container').append('<div class=message>' + message + '</div>');
     messages[data.id] = data;
 };
-
+var setRoomState = function setRoomState(data) {
+    roomState = data;
+};
+var sendQuestion = function sendQuestion() {
+    var question = $('#modal-question').val();
+    socket.emit('newQuestion', question);
+};
+var questionModal = function questionModal() {
+    if (roomState === 'notJoined') {
+        //return;
+    }
+    $('#questionModal').css('display', 'block');
+};
 var newTimer = function newTimer(length) {
     clock = length;
     timer = setInterval(updateClock, 1000);
@@ -107,6 +119,7 @@ var changeRoom = function changeRoom(room) {
     socket.emit('joinRoom', room);
     $('#chat-Toggle').css('display', 'initial');
     $('#instruc-toggle').css('display', 'none');
+    $('#askButton').css('display', 'block');
 };
 
 $('#true-message-field').focusin(function (e) {
@@ -121,21 +134,20 @@ $('#true-message-field').focusin(function (e) {
         }
     });
 });
-"use strict";
+'use strict';
 
-var placeholder = "MESSAGE DATA FROM SOCKET IO WILL LOAD IN HERE";
-var data = {
-    userName: "fakeGuy",
-    message: "I really wish this had functionality yet"
-};
 var timer = void 0;
 var clock = 0;
 var socket = void 0;
 var messages = {};
+// set up states for the room you are in can be
+// not joined, question in progress, no question
+var roomState = 'notJoined';
 
 var init = function init() {
     socket = io.connect();
     socket.on('msgFromServer', onMessage);
+    socket.on('roomStateUpdate', setRoomState);
     $('#math').click(function () {
         changeRoom('math');
     });
@@ -144,6 +156,13 @@ var init = function init() {
     });
     $('#science').click(function () {
         changeRoom('science');
+    });
+    $('#askButton').click(questionModal);
+    $('#modal-submit').click(sendQuestion);
+    $(window).click(function (e) {
+        if (e.target.id === 'questionModal') {
+            $('#questionModal').css('display', 'none');
+        }
     });
 };
 

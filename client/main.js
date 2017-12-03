@@ -1,19 +1,25 @@
-let placeholder = "MESSAGE DATA FROM SOCKET IO WILL LOAD IN HERE";
-let data = {
-    userName: "fakeGuy",
-    message: "I really wish this had functionality yet"
-}
 let timer;
 let clock = 0;
 let socket;
 let messages = {};
+// set up states for the room you are in can be
+// not joined, question in progress, no question
+let roomState = 'notJoined';
 
 const init = () =>{
     socket = io.connect();
     socket.on('msgFromServer', onMessage);
+    socket.on('roomStateUpdate', setRoomState);
     $('#math').click(()=>{changeRoom('math')});
     $('#code').click(()=>{changeRoom('code')});
     $('#science').click(()=>{changeRoom('science')});
+    $('#askButton').click(questionModal);
+    $('#modal-submit').click(sendQuestion);
+    $(window).click((e)=>{
+        if(e.target.id === 'questionModal'){
+            $('#questionModal').css('display', 'none');
+        }
+    });
 }
 
 //setInterval(() =>{onMessage(data)}, 5000);

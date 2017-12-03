@@ -69,7 +69,11 @@ const setupSockets = (ioServer) => {
             }
             console.dir(`${socket.hash} joined ${socket.room}`);
         });
-        
+        socket.on('newQuestion', (data)=>{
+            //add question to queue
+            addToQueue(data, socket.hash);
+            //save socket hash to the question
+        });
         socket.on('newMessage', (data) => {
             //create unique id for the message
             const messageID = xxh.h32(`${data.name}${new Date().getTime()}`, 0xBABEFACE).toString(16);

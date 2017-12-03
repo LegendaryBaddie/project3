@@ -4,7 +4,19 @@ const onMessage = (data) => {
     $('#chat-container').append(`<div class=message>${message}</div>`);
     messages[data.id]= data;
 } 
-
+const setRoomState = (data) => {
+    roomState = data;
+}
+const sendQuestion = () =>{
+    let question = $('#modal-question').val();
+    socket.emit('newQuestion', question);
+}
+const questionModal = () =>{
+    if(roomState === 'notJoined'){
+        //return;
+    }
+    $('#questionModal').css('display', 'block');
+}
 const newTimer = (length) => {
     clock = length;
     timer = setInterval(updateClock, 1000);
@@ -49,6 +61,7 @@ const changeRoom = (room) => {
      socket.emit('joinRoom', room);
      $('#chat-Toggle').css('display', 'initial');
      $('#instruc-toggle').css('display', 'none');
+     $('#askButton').css('display', 'block');
  }
 
 $('#true-message-field').focusin((e) => {
