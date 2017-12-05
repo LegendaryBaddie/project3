@@ -31,7 +31,8 @@
     "express-session": "^1.15.6",
     "mongoose": "^4.13.4",
     "nodemon": "^1.12.1",
-    "socket.io": "^1.0.0"
+    "socket.io": "^1.0.0",
+    "xxhashjs": "^0.2.1"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",

@@ -15,7 +15,7 @@ const router = require('./router.js');
 
 const dbURL = process.env.MONGODB_URI || 'mongodb://localhost/Project3';
 
-mongoose.connect(dbURL,{useMongoClient: true}, (err) => {
+mongoose.connect(dbURL, { useMongoClient: true }, (err) => {
   if (err) {
     console.log('Could not connect to database');
     throw err;
@@ -31,7 +31,7 @@ let redisPASS;
 
 if (process.env.REDISCLOUD_URL) {
   redisURL = url.parse(process.env.REDISCLOUD_URL);
-  redisPASS = redisURL.auth.split(':')[1];
+  [redisPASS] = redisURL.auth.split(':');
 }
 
 const PORT = process.env.PORT || process.env.NODE_PORT || 3000;
@@ -47,7 +47,7 @@ app.use(session({
   store: new RedisStore({
     host: redisURL.hostname,
     port: redisURL.port,
-    pass: redisPASS,
+    pass: redisPASS[1],
   }),
   secret: 'The Answer is 42',
   resave: true,
