@@ -13,19 +13,19 @@ const rooms = {
     connected: {},
     messages: {},
     questions: [],
-    currentQuestion: null,
+    currentQuestion: undefined,
   },
   code: {
     connected: {},
     messages: {},
     questions: [],
-    currentQuestion: null,
+    currentQuestion: undefined,
   },
   science: {
     connected: {},
     messages: {},
     questions: [],
-    currentQuestion: null,
+    currentQuestion: undefined,
   },
 };
 
@@ -136,29 +136,31 @@ const setupSockets = (ioServer) => {
 
     for (let i = 0; i < keys.length; i++) {
       // no question so nothing needs to be done
-      if (rooms[keys[i]].questions) {
-      // no question is active
-        if (!rooms[keys[i]].currentQuestion) {
+      if (rooms[keys[i]].questions[0] !== undefined) {
+        // no question is active
+        if (rooms[keys[i]].currentQuestion === undefined) {
         // set a new active question
         // remove current question from queue
-          rooms[keys[i]].currentQuestion = rooms[keys[i]].questions.splice(0, 1);
+          const eslintworkaround = 0;
+          rooms[keys[i]].currentQuestion = rooms[keys[i]].questions.splice(0, 1)[eslintworkaround];
 
           // emit new question to clients in this room
           io.to(keys[i]).emit('newQuestion', rooms[keys[i]].currentQuestion);
         } else {
         // increment the internal clock for the question
-          rooms[keys[i]].currentQuestion.updateTime();
-
+          rooms[keys[i]].currentQuestion.time -= 500;
+          console.log(rooms[keys[i]].currentQuestion.time);
           if (rooms[keys[i]].currentQuestion.time === 0) {
-          // questions time has run out, send the owner of the question to the results page
-          // add the question asker to a unique room, and remove them from the room they are in
-            const asker = rooms[keys[i]].connected[rooms[keys[i]].currentQuestion.id];
-            asker.leave(rooms[keys[i]]);
-            asker.join(`${asker.hash}`);
+            console.log('question time limit reached');
+            // questions time has run out, send the owner of the question to the results page
+            // add the question asker to a unique room, and remove them from the room they are in
+            // const asker = rooms[keys[i]].connected[rooms[keys[i]].currentQuestion.id];
+            // asker.leave(rooms[keys[i]]);
+            // asker.join(`${asker.hash}`);
 
             // load a different question to everyone in the room that isnt the owner.
             // we can do this by just setting current question to null
-            rooms[keys[i]].currentQuestion = null;
+            rooms[keys[i]].currentQuestion = undefined;
           }
         }
       }

@@ -9,3 +9,4 @@ const Question = class Question {
   }
 };
 module.exports.Question = Question;
+module.exports.updateTime = Question.updateTime;
