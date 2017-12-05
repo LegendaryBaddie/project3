@@ -4,6 +4,10 @@ const onMessage = (data) => {
     $('#chat-container').append(`<div class=message>${message}</div>`);
     messages[data.id]= data;
 } 
+const setQuestion = (data) => {
+    $('#the-question').html(data.content);
+    newTimer(data.time);
+}
 const setRoomState = (data) => {
     roomState = data;
 }
@@ -18,10 +22,16 @@ const questionModal = () =>{
     $('#questionModal').css('display', 'block');
 }
 const newTimer = (length) => {
-    clock = length;
+    clearInterval(timer);
+    clock = length/1000;
     timer = setInterval(updateClock, 1000);
 }
-
+const setRoomMessages = (data) => {
+ let keys = Object.keys(data);
+ for(let i = 0; i < keys.length; i++){
+     onMessage(data[keys[i]]);
+ }
+}
 const updateClock = () => {
     clock -= 1;
     if(clock == 0){
@@ -56,12 +66,18 @@ const changeRoom = (room) => {
  
      $(`#${room}`).addClass('active');
     
-     // add user to the chat room and load different partial
+     // add user to the chat room and reset chatbox;
 
-     socket.emit('joinRoom', room);
+     $('#the-question').html('No Question Asked');
+     $('#clock').html('0:00');
+     $('#chat-container').html('');
+     $('#true-message-field').val('');
      $('#chat-Toggle').css('display', 'initial');
      $('#instruc-toggle').css('display', 'none');
      $('#askButton').css('display', 'block');
+     clearInterval(timer);
+     clock = 0;
+     socket.emit('joinRoom', room);
  }
 
 $('#true-message-field').focusin((e) => {

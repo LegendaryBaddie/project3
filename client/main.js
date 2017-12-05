@@ -10,6 +10,8 @@ const init = () =>{
     socket = io.connect();
     socket.on('msgFromServer', onMessage);
     socket.on('roomStateUpdate', setRoomState);
+    socket.on('newQuestion', setQuestion);
+    socket.on('allMessages', setRoomMessages);
     $('#math').click(()=>{changeRoom('math')});
     $('#code').click(()=>{changeRoom('code')});
     $('#science').click(()=>{changeRoom('science')});

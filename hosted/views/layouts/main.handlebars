@@ -9,6 +9,7 @@
   <body>
     <nav id="fixed-top">
       {{#if account}}
+        <a href="/logout">Log Out</a>
       {{else}}
          <section id="login">
             <form id="loginForm" name="loginForm" action="/login" method="POST" class="mainForm">

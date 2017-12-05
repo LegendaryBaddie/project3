@@ -62,6 +62,10 @@ var onMessage = function onMessage(data) {
     $('#chat-container').append('<div class=message>' + message + '</div>');
     messages[data.id] = data;
 };
+var setQuestion = function setQuestion(data) {
+    $('#the-question').html(data.content);
+    newTimer(data.time);
+};
 var setRoomState = function setRoomState(data) {
     roomState = data;
 };
@@ -76,10 +80,16 @@ var questionModal = function questionModal() {
     $('#questionModal').css('display', 'block');
 };
 var newTimer = function newTimer(length) {
-    clock = length;
+    clearInterval(timer);
+    clock = length / 1000;
     timer = setInterval(updateClock, 1000);
 };
-
+var setRoomMessages = function setRoomMessages(data) {
+    var keys = Object.keys(data);
+    for (var i = 0; i < keys.length; i++) {
+        onMessage(data[keys[i]]);
+    }
+};
 var updateClock = function updateClock() {
     clock -= 1;
     if (clock == 0) {
@@ -114,12 +124,18 @@ var changeRoom = function changeRoom(room) {
 
     $('#' + room).addClass('active');
 
-    // add user to the chat room and load different partial
+    // add user to the chat room and reset chatbox;
 
-    socket.emit('joinRoom', room);
+    $('#the-question').html('No Question Asked');
+    $('#clock').html('0:00');
+    $('#chat-container').html('');
+    $('#true-message-field').val('');
     $('#chat-Toggle').css('display', 'initial');
     $('#instruc-toggle').css('display', 'none');
     $('#askButton').css('display', 'block');
+    clearInterval(timer);
+    clock = 0;
+    socket.emit('joinRoom', room);
 };
 
 $('#true-message-field').focusin(function (e) {
@@ -148,6 +164,8 @@ var init = function init() {
     socket = io.connect();
     socket.on('msgFromServer', onMessage);
     socket.on('roomStateUpdate', setRoomState);
+    socket.on('newQuestion', setQuestion);
+    socket.on('allMessages', setRoomMessages);
     $('#math').click(function () {
         changeRoom('math');
     });
