@@ -79,22 +79,7 @@ const addToQueue = (data, socket) => {
       break;
   }
 };
-const subtractTime = (room) => {
-  switch (room) {
-    case 'math':
-      rooms.math.currentQuestion.time = 500;
-      break;
-    case 'code':
-      rooms.code.currentQuestion.time = 500;
-      break;
-    case 'science':
-      rooms.science.currentQuestion.time = 500;
-      break;
-    default:
-      console.log(`Error in subtract time`);
-      break;
-  }
-}
+
 const setupSockets = (ioServer) => {
   io = ioServer;
   io.on('connection', (sock) => {
@@ -116,12 +101,11 @@ const setupSockets = (ioServer) => {
         // maybe check for messages in room and add them in
       }
       // send them the messages and questions;
-      if (rooms[sockRef[socket.hash]].currentQuestion !== undefined){
-      socket.emit('newQuestion', rooms[sockRef[socket.hash]].currentQuestion);
-      socket.emit('allMessages', rooms[sockRef[socket.hash]].messages);
-      console.log(rooms[sockRef[socket.hash]].currentQuestion.time);
+      if (rooms[sockRef[socket.hash]].currentQuestion !== undefined) {
+        socket.emit('newQuestion', rooms[sockRef[socket.hash]].currentQuestion);
+        socket.emit('allMessages', rooms[sockRef[socket.hash]].messages);
+        console.log(rooms[sockRef[socket.hash]].currentQuestion.time);
       }
-
     });
     socket.on('newQuestion', (data) => {
       // add question to queue
@@ -157,9 +141,10 @@ const setupSockets = (ioServer) => {
 
     for (let i = 0; i < keys.length; i++) {
       // no question so nothing needs to be done
-      if (rooms[keys[i]].questions[0] !== undefined || rooms[keys[i]].currentQuestion !== undefined ) {
+      if (rooms[keys[i]].questions[0] !== undefined ||
+         rooms[keys[i]].currentQuestion !== undefined) {
         // no question is active
-        
+
         if (rooms[keys[i]].currentQuestion === undefined) {
         // set a new active question
         // remove current question from queue

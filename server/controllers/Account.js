@@ -1,6 +1,6 @@
 const models = require('../models');
 
-const { Account }  = models;
+const { Account } = models;
 
 const signupPage = (req, res) => {
   res.render('signup', { csrfToken: req.csrfToken() });
