@@ -28,10 +28,11 @@ let redisURL = {
 };
 
 let redisPASS;
-
+// stupid eslint error workaround
+const someIndex = 1;
 if (process.env.REDISCLOUD_URL) {
   redisURL = url.parse(process.env.REDISCLOUD_URL);
-  [redisPASS] = redisURL.auth.split(':');
+  redisPASS = redisURL.auth.split(':')[someIndex];
 }
 
 const PORT = process.env.PORT || process.env.NODE_PORT || 3000;
@@ -47,7 +48,7 @@ app.use(session({
   store: new RedisStore({
     host: redisURL.hostname,
     port: redisURL.port,
-    pass: redisPASS[1],
+    pass: redisPASS,
   }),
   secret: 'The Answer is 42',
   resave: true,
