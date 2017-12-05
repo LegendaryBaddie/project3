@@ -104,6 +104,38 @@ body{
     display:none;
     cursor: pointer;
 }
+.content{
+    position: absolute;
+    width:70%;
+}
+.merit{
+    position:absolute;
+    width:10%;
+    height:90%;
+    border: solid 1px rgb(77, 128, 77);
+    border-radius: 15px;
+    background:palegreen;
+    right:0px;
+    margin-top:4px;
+    margin-right: 5px;
+    transition: border 1s, border-radius 1s, background 1s;
+    cursor: pointer;
+}
+.merit > h3{
+    text-align: center;
+    margin-top:10px;
+}
+.merit:hover{
+    border: solid 1px palegreen;
+    border-radius: 20px;
+    background:rgb(77, 128, 77);
+}
+.merit:active{
+    border: solid 1px rgb(77, 128, 77);
+    border-radius: 15px;
+    background:palegreen;
+    transition: border .3s, border-radius .3s, background .3s;
+}
 main{
     position:absolute;
     display:block;

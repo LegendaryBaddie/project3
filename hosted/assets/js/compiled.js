@@ -59,7 +59,7 @@ $(document).ready(function () {
 var onMessage = function onMessage(data) {
     var message = '<h3>' + data.name + '</h3>';
     message += '<p>' + data.content + '</p>';
-    $('#chat-container').append('<div class=message>' + message + '</div>');
+    $('#chat-container').append('<div class=message><div class=content>' + message + '</div><div class=merit val=' + data.id + '><h3>' + data.stars + '</h3></div></div>');
     messages[data.id] = data;
 };
 var setQuestion = function setQuestion(data) {
@@ -68,6 +68,9 @@ var setQuestion = function setQuestion(data) {
 };
 var setRoomState = function setRoomState(data) {
     roomState = data;
+};
+var sendMerit = function sendMerit(data) {
+    console.log(data);
 };
 var sendQuestion = function sendQuestion() {
     var question = $('#modal-question').val();
@@ -81,7 +84,7 @@ var questionModal = function questionModal() {
 };
 var newTimer = function newTimer(length) {
     clearInterval(timer);
-    clock = length / 1000;
+    clock = Math.floor(length / 1000);
     timer = setInterval(updateClock, 1000);
 };
 var setRoomMessages = function setRoomMessages(data) {
@@ -177,6 +180,9 @@ var init = function init() {
     });
     $('#askButton').click(questionModal);
     $('#modal-submit').click(sendQuestion);
+    $('.merit').click(function () {
+        console.log('sss');
+    });
     $(window).click(function (e) {
         if (e.target.id === 'questionModal') {
             $('#questionModal').css('display', 'none');

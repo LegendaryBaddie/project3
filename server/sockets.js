@@ -110,6 +110,7 @@ const setupSockets = (ioServer) => {
     socket.on('newQuestion', (data) => {
       // add question to queue
       addToQueue(data, socket);
+     
     });
     socket.on('newMessage', (data) => {
       // create unique id for the message
@@ -141,11 +142,9 @@ const setupSockets = (ioServer) => {
 
     for (let i = 0; i < keys.length; i++) {
       // no question so nothing needs to be done
-      if (rooms[keys[i]].questions[0] !== undefined ||
-         rooms[keys[i]].currentQuestion !== undefined) {
         // no question is active
 
-        if (rooms[keys[i]].currentQuestion === undefined) {
+        if (rooms[keys[i]].currentQuestion === undefined && rooms[keys[i]].questions[0] !== undefined) {
         // set a new active question
         // remove current question from queue
           const eslintworkaround = 0;
@@ -153,24 +152,28 @@ const setupSockets = (ioServer) => {
 
           // emit new question to clients in this room
           io.to(keys[i]).emit('newQuestion', rooms[keys[i]].currentQuestion);
-        } else {
+        } else if (rooms[keys[i]].currentQuestion != undefined){
         // increment the internal clock for the question
           rooms[keys[i]].currentQuestion.time -= 500;
           console.log(rooms[keys[i]].currentQuestion.time);
-          io.to(keys[i]).emit('newQuestion', rooms[keys[i]].currentQuestion);
+          //io.to(keys[i]).emit('timerUpdate', rooms[keys[i]].currentQuestion.time);
           if (rooms[keys[i]].currentQuestion.time === 0) {
             console.log('question time limit reached');
             // questions time has run out, send the owner of the question to the results page
             // add the question asker to a unique room, and remove them from the room they are in
-            // const asker = rooms[keys[i]].connected[rooms[keys[i]].currentQuestion.id];
-            // asker.leave(rooms[keys[i]]);
-            // asker.join(`${asker.hash}`);
+            if( socket.hash === rooms[keys[i]].connected[rooms[keys[i]].currentQuestion.id]);
+            {
+              let summary = {};
+              socket.leave(sockRef[socket.hash]);
+              socket.emit('answerSummary', summary);
+            }
+          
+            // save all the merits of each message to its owner.
 
             // load a different question to everyone in the room that isnt the owner.
             // we can do this by just setting current question to null
             rooms[keys[i]].currentQuestion = undefined;
           }
-        }
       }
     }
   }, 500);

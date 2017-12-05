@@ -1,7 +1,7 @@
 const onMessage = (data) => {
     let message = `<h3>${data.name}</h3>`;
     message += `<p>${data.content}</p>`;
-    $('#chat-container').append(`<div class=message>${message}</div>`);
+    $('#chat-container').append(`<div class=message><div class=content>${message}</div><div class=merit val=${data.id}><h3>${data.stars}</h3></div></div>`);
     messages[data.id]= data;
 } 
 const setQuestion = (data) => {
@@ -10,6 +10,9 @@ const setQuestion = (data) => {
 }
 const setRoomState = (data) => {
     roomState = data;
+}
+const sendMerit = (data) => {
+    console.log(data);
 }
 const sendQuestion = () =>{
     let question = $('#modal-question').val();
@@ -23,7 +26,7 @@ const questionModal = () =>{
 }
 const newTimer = (length) => {
     clearInterval(timer);
-    clock = length/1000;
+    clock = Math.floor(length/1000);
     timer = setInterval(updateClock, 1000);
 }
 const setRoomMessages = (data) => {
