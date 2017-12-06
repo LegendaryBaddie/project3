@@ -179,12 +179,13 @@ const setupSockets = (ioServer) => {
             console.log('question time limit reached');
             // questions time has run out, send the owner of the question to the results page
             // add the question asker to a unique room, and remove them from the room they are in
+            /* no access to socket
             if( socket.hash === rooms[keys[i]].connected[rooms[keys[i]].currentQuestion.id]);
             {
               let summary = {};
               socket.leave(sockRef[socket.hash]);
               socket.emit('answerSummary', summary);
-            }
+            }*/
           
             // save all the merits of each message to its owner.
 
