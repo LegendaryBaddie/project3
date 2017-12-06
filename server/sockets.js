@@ -107,6 +107,24 @@ const setupSockets = (ioServer) => {
         console.log(rooms[sockRef[socket.hash]].currentQuestion.time);
       }
     });
+    socket.on('addMerit', (data) => {
+      // data coming is the message id
+      // check to see if the message even exists
+      if(!rooms[sockRef[socket.hash]].messages[data])
+      {
+        return;
+      }
+    
+      if(rooms[sockRef[socket.hash]].messages[data].hasUpvoted[socket.hash])
+      {
+        return;
+      }
+      rooms[sockRef[socket.hash]].messages[data].hasUpvoted[socket.hash] = socket.hash;
+      rooms[sockRef[socket.hash]].messages[data].stars ++;
+      console.log(rooms[sockRef[socket.hash]].messages[data].stars);
+      io.to(sockRef[socket.hash]).emit('allMessages', rooms[sockRef[socket.hash]].messages);
+      
+    });
     socket.on('newQuestion', (data) => {
       // add question to queue
       addToQueue(data, socket);

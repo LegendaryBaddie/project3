@@ -4,14 +4,7 @@ const Message = class Message {
     this.content = content;
     this.id = id;
     this.stars = 0;
-  }
-
-  up() {
-    this.stars++;
-  }
-
-  down() {
-    this.stars--;
+    this.hasUpvoted = {};
   }
 
   toOBJ() {

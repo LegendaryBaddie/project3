@@ -1,8 +1,9 @@
 const onMessage = (data) => {
     let message = `<h3>${data.name}</h3>`;
     message += `<p>${data.content}</p>`;
-    $('#chat-container').append(`<div class=message><div class=content>${message}</div><div class=merit val=${data.id}><h3>${data.stars}</h3></div></div>`);
+    $('#chat-container').append(`<div class=message><div class=content>${message}</div><div class=merit onClick=sendMerit(this) id=${data.id}><h3>${data.stars}</h3></div></div>`);
     messages[data.id]= data;
+    //h$('.merit').click(()=>{sendMerit($(this).val())});
 } 
 const setQuestion = (data) => {
     $('#the-question').html(data.content);
@@ -12,7 +13,12 @@ const setRoomState = (data) => {
     roomState = data;
 }
 const sendMerit = (data) => {
-    console.log(data);
+    //check if the person clicking owns the message
+    if(messages[data.id].name === account){
+        console.log('shit');
+        return;
+    }
+    socket.emit('addMerit', data.id);
 }
 const sendQuestion = () =>{
     let question = $('#modal-question').val();
@@ -20,6 +26,7 @@ const sendQuestion = () =>{
 }
 const questionModal = () =>{
     if(roomState === 'notJoined'){
+        
         //return;
     }
     $('#questionModal').css('display', 'block');
@@ -30,6 +37,9 @@ const newTimer = (length) => {
     timer = setInterval(updateClock, 1000);
 }
 const setRoomMessages = (data) => {
+    //clear all messsages first
+    $('#chat-container').empty();
+    messages = {};
  let keys = Object.keys(data);
  for(let i = 0; i < keys.length; i++){
      onMessage(data[keys[i]]);

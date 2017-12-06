@@ -59,8 +59,9 @@ $(document).ready(function () {
 var onMessage = function onMessage(data) {
     var message = '<h3>' + data.name + '</h3>';
     message += '<p>' + data.content + '</p>';
-    $('#chat-container').append('<div class=message><div class=content>' + message + '</div><div class=merit val=' + data.id + '><h3>' + data.stars + '</h3></div></div>');
+    $('#chat-container').append('<div class=message><div class=content>' + message + '</div><div class=merit onClick=sendMerit(this) id=' + data.id + '><h3>' + data.stars + '</h3></div></div>');
     messages[data.id] = data;
+    //h$('.merit').click(()=>{sendMerit($(this).val())});
 };
 var setQuestion = function setQuestion(data) {
     $('#the-question').html(data.content);
@@ -70,7 +71,12 @@ var setRoomState = function setRoomState(data) {
     roomState = data;
 };
 var sendMerit = function sendMerit(data) {
-    console.log(data);
+    //check if the person clicking owns the message
+    if (messages[data.id].name === account) {
+        console.log('shit');
+        return;
+    }
+    socket.emit('addMerit', data.id);
 };
 var sendQuestion = function sendQuestion() {
     var question = $('#modal-question').val();
@@ -78,6 +84,7 @@ var sendQuestion = function sendQuestion() {
 };
 var questionModal = function questionModal() {
     if (roomState === 'notJoined') {
+
         //return;
     }
     $('#questionModal').css('display', 'block');
@@ -88,6 +95,9 @@ var newTimer = function newTimer(length) {
     timer = setInterval(updateClock, 1000);
 };
 var setRoomMessages = function setRoomMessages(data) {
+    //clear all messsages first
+    $('#chat-container').empty();
+    messages = {};
     var keys = Object.keys(data);
     for (var i = 0; i < keys.length; i++) {
         onMessage(data[keys[i]]);
@@ -180,9 +190,7 @@ var init = function init() {
     });
     $('#askButton').click(questionModal);
     $('#modal-submit').click(sendQuestion);
-    $('.merit').click(function () {
-        console.log('sss');
-    });
+
     $(window).click(function (e) {
         if (e.target.id === 'questionModal') {
             $('#questionModal').css('display', 'none');

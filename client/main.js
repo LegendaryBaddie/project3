@@ -17,7 +17,7 @@ const init = () =>{
     $('#science').click(()=>{changeRoom('science')});
     $('#askButton').click(questionModal);
     $('#modal-submit').click(sendQuestion);
-    $('.merit').click(()=>{console.log('sss')});
+    
     $(window).click((e)=>{
         if(e.target.id === 'questionModal'){
             $('#questionModal').css('display', 'none');
