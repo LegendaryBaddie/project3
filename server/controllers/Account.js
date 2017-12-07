@@ -65,7 +65,32 @@ const signup = (request, response) => {
   });
 };
 
+const updateMerits = (account, meritInc) => {
+  Account.AccountModel.findByUsername(account, (err, doc)=>{
+    if(err)
+    {
+      console.log(`error in updateMerit: ${err}`);
+      return;
+    }
+    if(!doc)
+    {
+      console.log(`no account found`);
+      return;
+    }
+    const acc = doc;
+    //increase merits by the amount they had on the message;
+    acc.merits += meritInc;
+    //save the data back to the database
+    acc.save((er) => {
+      if (er) {
+        console.log(er);
+      }
+    });
+  });
+}
+
 module.exports.login = login;
 module.exports.logout = logout;
 module.exports.signup = signup;
 module.exports.signupPage = signupPage;
+module.exports.updateMerits = updateMerits;

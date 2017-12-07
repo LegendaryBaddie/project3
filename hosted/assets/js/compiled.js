@@ -66,14 +66,12 @@ var onMessage = function onMessage(data) {
 var setQuestion = function setQuestion(data) {
     $('#the-question').html(data.content);
     newTimer(data.time);
+    $('#true-message-field').removeAttr('disabled');
 };
-var setRoomState = function setRoomState(data) {
-    roomState = data;
-};
+
 var sendMerit = function sendMerit(data) {
     //check if the person clicking owns the message
     if (messages[data.id].name === account) {
-        console.log('shit');
         return;
     }
     socket.emit('addMerit', data.id);
@@ -82,11 +80,14 @@ var sendQuestion = function sendQuestion() {
     var question = $('#modal-question').val();
     socket.emit('newQuestion', question);
 };
+var resetQuestion = function resetQuestion() {
+    $('#the-question').html("Waiting for a Question");
+    $('#clock').html('0:00');
+    $('#chat-containter').empty();
+    // disable sending messages 
+    $('#true-message-field').attr('disabled');
+};
 var questionModal = function questionModal() {
-    if (roomState === 'notJoined') {
-
-        //return;
-    }
     $('#questionModal').css('display', 'block');
 };
 var newTimer = function newTimer(length) {
@@ -107,6 +108,7 @@ var updateClock = function updateClock() {
     clock -= 1;
     if (clock == 0) {
         clearInterval(timer);
+        $('#clock').html('0:00');
         //dont need to handle a new message because it will be sent by the server
         return;
     }
@@ -171,14 +173,13 @@ var socket = void 0;
 var messages = {};
 // set up states for the room you are in can be
 // not joined, question in progress, no question
-var roomState = 'notJoined';
 
 var init = function init() {
     socket = io.connect();
     socket.on('msgFromServer', onMessage);
-    socket.on('roomStateUpdate', setRoomState);
     socket.on('newQuestion', setQuestion);
     socket.on('allMessages', setRoomMessages);
+    socket.on('resetQuestion', resetQuestion);
     $('#math').click(function () {
         changeRoom('math');
     });

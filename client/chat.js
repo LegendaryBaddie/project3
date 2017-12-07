@@ -8,14 +8,12 @@ const onMessage = (data) => {
 const setQuestion = (data) => {
     $('#the-question').html(data.content);
     newTimer(data.time);
+    $('#true-message-field').removeAttr('disabled');
 }
-const setRoomState = (data) => {
-    roomState = data;
-}
+
 const sendMerit = (data) => {
     //check if the person clicking owns the message
     if(messages[data.id].name === account){
-        console.log('shit');
         return;
     }
     socket.emit('addMerit', data.id);
@@ -24,11 +22,14 @@ const sendQuestion = () =>{
     let question = $('#modal-question').val();
     socket.emit('newQuestion', question);
 }
+const resetQuestion = () => {
+    $('#the-question').html("Waiting for a Question");
+    $('#clock').html('0:00');
+    $('#chat-containter').empty();
+    // disable sending messages 
+    $('#true-message-field').attr('disabled');
+}
 const questionModal = () =>{
-    if(roomState === 'notJoined'){
-        
-        //return;
-    }
     $('#questionModal').css('display', 'block');
 }
 const newTimer = (length) => {
@@ -49,6 +50,7 @@ const updateClock = () => {
     clock -= 1;
     if(clock == 0){
         clearInterval(timer);
+        $('#clock').html('0:00');
         //dont need to handle a new message because it will be sent by the server
         return;
     }

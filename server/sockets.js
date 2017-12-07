@@ -1,6 +1,7 @@
 const xxh = require('xxhashjs');
 const msg = require('./classes/message.js');
 const quest = require('./classes/question.js');
+const controllers = require('./controllers');
 
 let io;
 
@@ -103,7 +104,9 @@ const setupSockets = (ioServer) => {
       // send them the messages and questions;
       if (rooms[sockRef[socket.hash]].currentQuestion !== undefined) {
         socket.emit('newQuestion', rooms[sockRef[socket.hash]].currentQuestion);
-        socket.emit('allMessages', rooms[sockRef[socket.hash]].messages);
+        if(rooms[sockRef[socket.hash]].messages !== undefined){
+          socket.emit('allMessages', rooms[sockRef[socket.hash]].messages);
+        }
         console.log(rooms[sockRef[socket.hash]].currentQuestion.time);
       }
     });
@@ -188,10 +191,22 @@ const setupSockets = (ioServer) => {
             }*/
           
             // save all the merits of each message to its owner.
-
+            const messageKeys = Object.keys(rooms[keys[i]].messages);
+            for(let i=0;i<messageKeys.length;i++){
+              //if the message has merits to add
+              if(rooms[keys[i]].messages[messageKeys[i]].stars > 0)
+              {
+                controllers.Account.updateMerits(rooms[keys[i]].messages[messageKeys[i]].name,
+                   rooms[keys[i]].messages[messageKeys[i]].stars);
+              }
+            }
+            // clear the messages object
+            rooms[keys[i]].messages = {};
             // load a different question to everyone in the room that isnt the owner.
             // we can do this by just setting current question to null
             rooms[keys[i]].currentQuestion = undefined;
+            // tell the clients to reset their question and time
+            io.to(keys[i]).emit('resetQuestion');
           }
       }
     }
