@@ -61,14 +61,15 @@ var onMessage = function onMessage(data) {
     message += '<p>' + data.content + '</p>';
     $('#chat-container').append('<div class=message><div class=content>' + message + '</div><div class=merit onClick=sendMerit(this) id=' + data.id + '><h3>' + data.stars + '</h3></div></div>');
     messages[data.id] = data;
-    //h$('.merit').click(()=>{sendMerit($(this).val())});
 };
 var setQuestion = function setQuestion(data) {
     $('#the-question').html(data.content);
     newTimer(data.time);
     $('#true-message-field').removeAttr('disabled');
 };
-
+var queueDisplay = function queueDisplay(data) {
+    $('#queue-count').html('Questions in Queue:' + data);
+};
 var sendMerit = function sendMerit(data) {
     //check if the person clicking owns the message
     if (messages[data.id].name === account) {
@@ -85,7 +86,7 @@ var resetQuestion = function resetQuestion() {
     $('#clock').html('0:00');
     $('#chat-containter').empty();
     // disable sending messages 
-    $('#true-message-field').attr('disabled');
+    $('#true-message-field').attr('disabled', 'true');
 };
 var questionModal = function questionModal() {
     $('#questionModal').css('display', 'block');
@@ -148,6 +149,7 @@ var changeRoom = function changeRoom(room) {
     $('#chat-Toggle').css('display', 'initial');
     $('#instruc-toggle').css('display', 'none');
     $('#askButton').css('display', 'block');
+    $('#queue-box').css('display', 'block');
     clearInterval(timer);
     clock = 0;
     socket.emit('joinRoom', room);
@@ -180,6 +182,7 @@ var init = function init() {
     socket.on('newQuestion', setQuestion);
     socket.on('allMessages', setRoomMessages);
     socket.on('resetQuestion', resetQuestion);
+    socket.on('queueUpdate', queueDisplay);
     $('#math').click(function () {
         changeRoom('math');
     });

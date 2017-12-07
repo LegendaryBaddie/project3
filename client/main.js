@@ -11,6 +11,7 @@ const init = () =>{
     socket.on('newQuestion', setQuestion);
     socket.on('allMessages', setRoomMessages);
     socket.on('resetQuestion', resetQuestion);
+    socket.on('queueUpdate', queueDisplay);
     $('#math').click(()=>{changeRoom('math')});
     $('#code').click(()=>{changeRoom('code')});
     $('#science').click(()=>{changeRoom('science')});

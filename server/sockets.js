@@ -131,7 +131,9 @@ const setupSockets = (ioServer) => {
     socket.on('newQuestion', (data) => {
       // add question to queue
       addToQueue(data, socket);
-     
+      // update questions in queue
+
+      io.to(sockRef[socket.hash]).emit('queueUpdate', rooms[sockRef[socket.hash]].questions.length); 
     });
     socket.on('newMessage', (data) => {
       // create unique id for the message
@@ -170,7 +172,8 @@ const setupSockets = (ioServer) => {
         // remove current question from queue
           const eslintworkaround = 0;
           rooms[keys[i]].currentQuestion = rooms[keys[i]].questions.splice(0, 1)[eslintworkaround];
-
+          //update client questoin queue
+          io.to(keys[i]).emit('queueUpdate', 0);
           // emit new question to clients in this room
           io.to(keys[i]).emit('newQuestion', rooms[keys[i]].currentQuestion);
         } else if (rooms[keys[i]].currentQuestion != undefined){
@@ -192,12 +195,12 @@ const setupSockets = (ioServer) => {
           
             // save all the merits of each message to its owner.
             const messageKeys = Object.keys(rooms[keys[i]].messages);
-            for(let i=0;i<messageKeys.length;i++){
+            for(let k=0;k<messageKeys.length;k++){
               //if the message has merits to add
-              if(rooms[keys[i]].messages[messageKeys[i]].stars > 0)
+              if(rooms[keys[i]].messages[messageKeys[k]].stars > 0)
               {
-                controllers.Account.updateMerits(rooms[keys[i]].messages[messageKeys[i]].name,
-                   rooms[keys[i]].messages[messageKeys[i]].stars);
+                controllers.Account.updateMerits(rooms[keys[i]].messages[messageKeys[k]].name,
+                   rooms[keys[i]].messages[messageKeys[k]].stars);
               }
             }
             // clear the messages object
@@ -205,6 +208,8 @@ const setupSockets = (ioServer) => {
             // load a different question to everyone in the room that isnt the owner.
             // we can do this by just setting current question to null
             rooms[keys[i]].currentQuestion = undefined;
+            //update queue
+            io.to(keys[i]).emit('queueUpdate', rooms[keys[i]].questions.length)
             // tell the clients to reset their question and time
             io.to(keys[i]).emit('resetQuestion');
           }

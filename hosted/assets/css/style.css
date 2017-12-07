@@ -104,6 +104,9 @@ body{
     display:none;
     cursor: pointer;
 }
+#queue-box{
+    display:none;
+}
 .content{
     position: absolute;
     width:70%;
