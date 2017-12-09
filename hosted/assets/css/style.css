@@ -16,8 +16,8 @@ body{
     margin: 0px;
     padding: 0px;
     background:aquamarine;
-    box-shadow:inset 0px -10px 10px -5px lightgrey;
-    z-index: 2;
+    box-shadow: 0px 0px 2px 3px aquamarine;
+    z-index: 20;
 }
 #side-capsule{
     width:20%;
@@ -27,6 +27,7 @@ body{
     left:0px;
     margin: 0px;
     padding: 5% 0px 0px 0px;
+    z-index:5;
     background:lightgray;
     box-shadow:inset 0px 0px 10px 1px black;
 }
@@ -68,11 +69,14 @@ body{
     display:none;
     transition: display 3s;
 }
-#instru-Toggle{
+#instru-toggle{
     transition: display 3s;
+    text-align: center;
+    padding-top: 50px;
+    font-size: 30pt;
 }
 /*Modal*/
-#questionModal{
+#Modal{
     display: none;
     position: fixed;
     z-index: 10000;
@@ -92,11 +96,24 @@ body{
     width:75%;
     border: 3px solid palegreen;
     border-radius: 25px;
-}#modal-submit{
+}
+#modal-submit{
     border: 1px solid #000;
     padding: 10px;
 }
+#modal-summary{
+    display: none;
+    margin:auto;
+    width:fit-content;
+    height: 70%;
+    text-align: center;
+}
+#modal-summary-messages{
+    overflow: scroll;
+    height:70%;
+}
 #modal-inner-content{
+    display:none;
     margin:auto;
     width: fit-content;
 }
@@ -106,6 +123,9 @@ body{
 }
 #queue-box{
     display:none;
+}
+#best{
+    border: 2px solid palevioletred;
 }
 .content{
     position: absolute;
@@ -146,9 +166,16 @@ main{
     height:90%;
     left:20%;
     top:10%;
-    box-shadow: 0px 0px 10px 1px black;
-    background:white;
+    box-shadow: inset 0px 0px 10px 1px aquamarine;
+    background:rgb(231, 231, 231);
     z-index: 10;
+   
+    
+}
+#shadow{
+    box-shadow: 0px 0px 10px 1px black;
+    width:100%;
+    height:100%;
 }
 #clock-container{
     position:absolute;
@@ -157,7 +184,9 @@ main{
     height:20%;
     left:70%;
     top:0%;
-    background:blue;
+    background:paleturquoise;
+    text-align: center;
+    border-radius: 0px 0px 25px 25px;
 }
 #question-container{
     position:absolute;
@@ -166,7 +195,15 @@ main{
     height:20%;
     left:0%;
     top:0%;
-    background:red;
+    border-radius: 0px 0px 25px 25px;
+    background:palevioletred;
+    text-align: center;
+}
+#the-question{
+    margin-top: 30px;
+}
+#clock{
+    margin-top:30px;
 }
 #chat-container{
     position:absolute;
@@ -186,11 +223,11 @@ main{
     top:80%;
 }
 #true-message-field{
-    position:absolute;
     display:block;
     width:90%;
     left:0%;
-    font-size: 20pt;
+    font-size: 30pt;
+    margin:auto;
 }
 #queue-box{
     position: absolute;
@@ -202,9 +239,10 @@ main{
 .message{
     position:relative;
     height:100px;
-    width:90%;
-    border:5px solid blue;
+    width:99%;
+    border-bottom:2px solid palegoldenrod;
     text-align: left;
+    margin:auto;
 }
 p>.message{
     display:block;

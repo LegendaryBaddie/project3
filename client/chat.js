@@ -22,6 +22,9 @@ const sendMerit = (data) => {
 }
 const sendQuestion = () =>{
     let question = $('#modal-question').val();
+    $('#Modal').css('display', 'none');
+    $('#modal-inner-content').css('display', 'none');
+    $('#modal-question').val('');
     socket.emit('newQuestion', question);
 }
 const resetQuestion = () => {
@@ -31,9 +34,32 @@ const resetQuestion = () => {
     // disable sending messages 
     $('#true-message-field').attr('disabled', 'true');
 }
-const questionModal = () =>{
-    $('#questionModal').css('display', 'block');
+const modal = (toggle) =>{
+    $('#Modal').css('display', 'block');
+    // true means its question
+    if(toggle){
+        $('#modal-inner-content').css('display', 'block');
+    }else{
+        $('#modal-summary').css('display', 'block');
+    }
 }
+const fullSummary = (data) =>{
+    //clear summary
+    $('#modal-summary-best').empty();
+    $('#modal-summary-messages').empty();
+    //check for #1 post
+    let keys = Object.keys(data.messages);
+    if(data.highestMessage !== undefined){
+    $('#modal-summary-best').html(`<h2>Your highest rated answer</h2><div id=best class=message><div class=content>
+    <h3>${data.highestMessage.name}</h3><p>${data.highestMessage.content}</p></div></div>`);
+    }
+    for(let i=0;i<keys.length;i++){
+    let message = `<h3>${data.messages[keys[i]].name}</h3>`;
+    message += `<p>${data.messages[keys[i]].content}</p>`;
+    $('#modal-summary-messages').append(`<div class=message><div class=content>${message}</div></div>`);
+    }
+    modal(false);
+};
 const newTimer = (length) => {
     clearInterval(timer);
     clock = Math.floor(length/1000);
@@ -90,7 +116,7 @@ const changeRoom = (room) => {
      $('#chat-container').html('');
      $('#true-message-field').val('');
      $('#chat-Toggle').css('display', 'initial');
-     $('#instruc-toggle').css('display', 'none');
+     $('#instru-toggle').css('display', 'none');
      $('#askButton').css('display', 'block');
      $('#queue-box').css('display', 'block');
      clearInterval(timer);

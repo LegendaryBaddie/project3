@@ -81,12 +81,38 @@ const addToQueue = (data, socket) => {
   }
 };
 
+const generateSummary = (room) => {
+  //highest rated message
+  let highestMerit = 0;
+  let highestMessage;
+  let messageKeys = Object.keys(rooms[room].messages);
+  for(let i=0; i<messageKeys.length; i++){
+    if(rooms[room].messages[messageKeys[i]].stars > highestMerit)
+    {
+      highestMessage = rooms[room].messages[messageKeys[i]];
+    } 
+  }
+  //if no one upvoted at all
+  if(highestMessage === 0){
+    return rooms[room].messages;
+  }else{
+    let data = {
+      highestMessage,
+      messages: rooms[room].messages
+    };
+    return data;
+  }
+  //all messages
+};
+
 const setupSockets = (ioServer) => {
   io = ioServer;
   io.on('connection', (sock) => {
     const socket = sock;
     const hash = xxh.h32(`${socket.id}${new Date().getTime()}`, 0xCAFEBABE).toString(16);
     socket.hash = hash;
+    // add sockets to a room of their hash, so we can contact single sockets later.
+    socket.join(socket.hash);
     // switch between message rooms
     socket.on('joinRoom', (room) => {
       // should check to make sure the room is a valid room here
@@ -179,19 +205,16 @@ const setupSockets = (ioServer) => {
         } else if (rooms[keys[i]].currentQuestion != undefined){
         // increment the internal clock for the question
           rooms[keys[i]].currentQuestion.time -= 500;
-          console.log(rooms[keys[i]].currentQuestion.time);
           //io.to(keys[i]).emit('timerUpdate', rooms[keys[i]].currentQuestion.time);
           if (rooms[keys[i]].currentQuestion.time === 0) {
             console.log('question time limit reached');
             // questions time has run out, send the owner of the question to the results page
             // add the question asker to a unique room, and remove them from the room they are in
-            /* no access to socket
-            if( socket.hash === rooms[keys[i]].connected[rooms[keys[i]].currentQuestion.id]);
-            {
-              let summary = {};
-              socket.leave(sockRef[socket.hash]);
-              socket.emit('answerSummary', summary);
-            }*/
+            //check if there is any messages to get for a summary
+            if(rooms[keys[i]].messages !== undefined){
+            let summary = generateSummary(keys[i]);
+            io.to(rooms[keys[i]].currentQuestion.id).emit('summary', summary);
+          }
           
             // save all the merits of each message to its owner.
             const messageKeys = Object.keys(rooms[keys[i]].messages);

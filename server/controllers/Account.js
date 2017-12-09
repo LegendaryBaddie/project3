@@ -7,7 +7,7 @@ const signupPage = (req, res) => {
 };
 const logout = (req, res) => {
   req.session.destroy();
-  res.redirect('redirect');
+  return res.json({ redirect: '/' });
 };
 
 const login = (request, response) => {
@@ -59,8 +59,8 @@ const signup = (request, response) => {
       }
 
       req.session.account = Account.AccountModel.toAPI(newAccount);
-      // redirect to current button creation/ownership page
-      return res.redirect('/');
+      //
+      return res.redirect('/chat');
     });
   });
 };

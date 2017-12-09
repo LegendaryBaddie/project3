@@ -79,6 +79,9 @@ var sendMerit = function sendMerit(data) {
 };
 var sendQuestion = function sendQuestion() {
     var question = $('#modal-question').val();
+    $('#Modal').css('display', 'none');
+    $('#modal-inner-content').css('display', 'none');
+    $('#modal-question').val('');
     socket.emit('newQuestion', question);
 };
 var resetQuestion = function resetQuestion() {
@@ -88,8 +91,30 @@ var resetQuestion = function resetQuestion() {
     // disable sending messages 
     $('#true-message-field').attr('disabled', 'true');
 };
-var questionModal = function questionModal() {
-    $('#questionModal').css('display', 'block');
+var modal = function modal(toggle) {
+    $('#Modal').css('display', 'block');
+    // true means its question
+    if (toggle) {
+        $('#modal-inner-content').css('display', 'block');
+    } else {
+        $('#modal-summary').css('display', 'block');
+    }
+};
+var fullSummary = function fullSummary(data) {
+    //clear summary
+    $('#modal-summary-best').empty();
+    $('#modal-summary-messages').empty();
+    //check for #1 post
+    var keys = Object.keys(data.messages);
+    if (data.highestMessage !== undefined) {
+        $('#modal-summary-best').html('<h2>Your highest rated answer</h2><div id=best class=message><div class=content>\n    <h3>' + data.highestMessage.name + '</h3><p>' + data.highestMessage.content + '</p></div></div>');
+    }
+    for (var i = 0; i < keys.length; i++) {
+        var message = '<h3>' + data.messages[keys[i]].name + '</h3>';
+        message += '<p>' + data.messages[keys[i]].content + '</p>';
+        $('#modal-summary-messages').append('<div class=message><div class=content>' + message + '</div></div>');
+    }
+    modal(false);
 };
 var newTimer = function newTimer(length) {
     clearInterval(timer);
@@ -147,7 +172,7 @@ var changeRoom = function changeRoom(room) {
     $('#chat-container').html('');
     $('#true-message-field').val('');
     $('#chat-Toggle').css('display', 'initial');
-    $('#instruc-toggle').css('display', 'none');
+    $('#instru-toggle').css('display', 'none');
     $('#askButton').css('display', 'block');
     $('#queue-box').css('display', 'block');
     clearInterval(timer);
@@ -183,6 +208,7 @@ var init = function init() {
     socket.on('allMessages', setRoomMessages);
     socket.on('resetQuestion', resetQuestion);
     socket.on('queueUpdate', queueDisplay);
+    socket.on('summary', fullSummary);
     $('#math').click(function () {
         changeRoom('math');
     });
@@ -192,12 +218,16 @@ var init = function init() {
     $('#science').click(function () {
         changeRoom('science');
     });
-    $('#askButton').click(questionModal);
+    $('#askButton').click(function () {
+        modal(true);
+    });
     $('#modal-submit').click(sendQuestion);
 
     $(window).click(function (e) {
-        if (e.target.id === 'questionModal') {
-            $('#questionModal').css('display', 'none');
+        if (e.target.id === 'Modal') {
+            $('#Modal').css('display', 'none');
+            $('#modal-summary').css('display', 'none');
+            $('#modal-inner-content').css('display', 'none');
         }
     });
 };
