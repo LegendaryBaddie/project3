@@ -84,6 +84,14 @@ var sendQuestion = function sendQuestion() {
     $('#modal-question').val('');
     socket.emit('newQuestion', question);
 };
+var extendClock = function extendClock() {
+    if (clock > 5) {
+        socket.emit('extendClock');
+    }
+};
+var clockExtension = function clockExtension() {
+    clock += 60;
+};
 var resetQuestion = function resetQuestion() {
     $('#the-question').html("Waiting for a Question");
     $('#clock').html('0:00');
@@ -106,8 +114,16 @@ var fullSummary = function fullSummary(data) {
     $('#modal-summary-messages').empty();
     //check for #1 post
     var keys = Object.keys(data.messages);
+    var hKeys = Object.keys(data.highestMessage);
+    //at least two messages with the same merit count
     if (data.highestMessage !== undefined) {
-        $('#modal-summary-best').html('<h2>Your highest rated answer</h2><div id=best class=message><div class=content>\n    <h3>' + data.highestMessage.name + '</h3><p>' + data.highestMessage.content + '</p></div></div>');
+        if (hKeys.length > 1) {
+            for (var k = 0; k < hKeys.length; k++) {
+                $('#modal-summary-best').append('<div class=message><div class=content>\n            <h3>' + data.highestMessage[hKeys[k]].name + '</h3><p>' + data.highestMessage[hKeys[k]].content + '</p></div></div>');
+            }
+        } else {
+            $('#modal-summary-best').html('<h2>Your highest rated answer</h2><div class=message><div class=content>\n    <h3>' + data.highestMessage[hKeys[0]].name + '</h3><p>' + data.highestMessage[hkeys[0]].content + '</p></div></div>');
+        }
     }
     for (var i = 0; i < keys.length; i++) {
         var message = '<h3>' + data.messages[keys[i]].name + '</h3>';
@@ -187,6 +203,7 @@ $('#true-message-field').focusin(function (e) {
                 message: $('#true-message-field').val(),
                 name: account
             };
+            $('#true-message-field').empty();
             $('#true-message-field').val("");
             socket.emit('newMessage', data);
         }
@@ -209,6 +226,7 @@ var init = function init() {
     socket.on('resetQuestion', resetQuestion);
     socket.on('queueUpdate', queueDisplay);
     socket.on('summary', fullSummary);
+    socket.on('clockExtension', clockExtension);
     $('#math').click(function () {
         changeRoom('math');
     });
@@ -222,6 +240,10 @@ var init = function init() {
         modal(true);
     });
     $('#modal-submit').click(sendQuestion);
+    $('#extend-clock').click(extendClock);
+    $('#account-link').click(function () {
+        window.location.replace('/account');
+    });
 
     $(window).click(function (e) {
         if (e.target.id === 'Modal') {

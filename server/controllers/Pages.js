@@ -6,7 +6,7 @@ const index = (req, res) => {
   }
   return res.render('index', {
     csrfToken: req.csrfToken(),
-    account: JSON.stringify(req.session.account.username),
+    account: req.session.account.username,
   });
 };
 const chat = (req, res) => {
@@ -17,7 +17,7 @@ const chat = (req, res) => {
   }
   return res.render('chat', {
     csrfToken: req.csrfToken(),
-    account: JSON.stringify(req.session.account.username),
+    account: req.session.account.username,
   });
 };
 

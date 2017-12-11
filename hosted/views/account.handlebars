@@ -1,0 +1,14 @@
+<main>
+    <div id="shadow">
+        <a href="/chat">Back to Chat</a>
+        <h1>{{{account}}}</h1>
+        <h2>Merits: {{{merits}}}</h2>
+        {{#if premium}}
+        <h2>You're a premium user!</h2>
+        {{else}}
+        <h2>You are just a regular member :(</h2>
+        <!--no functionality behind this button because we aren't taking any money -->
+        <a id="buyPremium">Click here to change that!</a>
+        {{/if}}
+    </div>
+</main>

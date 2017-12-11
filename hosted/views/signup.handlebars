@@ -1,15 +1,28 @@
-<h1>Sign Up</h1>
+
 <main>
+<div id="shadow">
+	<h1>Create an account to participate!</h1>
 <section id="signup">
 	<form id="signupForm" name="signupForm" action="/signup" method="POST" class="mainForm">
-		<label for="username">Username: </label>
-		<input id="user" type="text" name="username" placeholder="username" />
-		<label for="pass">Password: </label>
-		<input id="pass" type="password" name="pass" placeholder="password" />
-		<label for="pass2">Password: </label>
-		<input id="pass2" type="password" name="pass2" placeholder="retype password" />
+		<ul>
+		<li>
+			<label for="username">Username: </label>
+			<input id="user" type="text" name="username" placeholder="username" />
+		</li>
+		<li>
+			<label for="pass">Password: </label>
+			<input id="pass" type="password" name="pass" placeholder="password" />
+		</li>
+		<li>
+			<label for="pass2">Password: </label>
+			<input id="pass2" type="password" name="pass2" placeholder="retype password" />
+		</li>
 		<input type="hidden" name="_csrf" value={{csrfToken}} />
-		<a id="signupSubmit" class="fakeButton" href="#" class="formSubmit">Sign up</a>
+		<li>
+			<a id="signupSubmit" class="fakeButton" href="#" class="formSubmit">Sign up</a>
+		</li>
+		</ul>
 	</form>
 </section>
+</div>
 </main>

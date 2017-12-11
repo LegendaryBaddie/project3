@@ -84,13 +84,14 @@ const addToQueue = (data, socket) => {
 const generateSummary = (room) => {
   //highest rated message
   let highestMerit = 0;
-  let highestMessage;
+  let highestMessage = {};
   let messageKeys = Object.keys(rooms[room].messages);
   for(let i=0; i<messageKeys.length; i++){
-    if(rooms[room].messages[messageKeys[i]].stars > highestMerit)
+    if(rooms[room].messages[messageKeys[i]].stars >= highestMerit)
     {
-      highestMessage = rooms[room].messages[messageKeys[i]];
+      highestMessage[i] = rooms[room].messages[messageKeys[i]];
     } 
+
   }
   //if no one upvoted at all
   if(highestMessage === 0){
@@ -133,7 +134,19 @@ const setupSockets = (ioServer) => {
         if(rooms[sockRef[socket.hash]].messages !== undefined){
           socket.emit('allMessages', rooms[sockRef[socket.hash]].messages);
         }
-        console.log(rooms[sockRef[socket.hash]].currentQuestion.time);
+      }
+    });
+    socket.on('extendClock',(data) =>{
+      //if the doesnt owns the question
+      if(socket.hash !== rooms[sockRef[socket.hash]].currentQuestion.id)
+      {
+        return;
+      }
+      //return if the user doesnt have enough merits
+      if(controllers.Account.updateMerits(data, -100))
+      {
+        rooms[sockRef[socket.hash]].currentQuestion.time +=60000;
+        io.to(sockRef[socket.hash]).emit('clockExtension');
       }
     });
     socket.on('addMerit', (data) => {
@@ -150,7 +163,6 @@ const setupSockets = (ioServer) => {
       }
       rooms[sockRef[socket.hash]].messages[data].hasUpvoted[socket.hash] = socket.hash;
       rooms[sockRef[socket.hash]].messages[data].stars ++;
-      console.log(rooms[sockRef[socket.hash]].messages[data].stars);
       io.to(sockRef[socket.hash]).emit('allMessages', rooms[sockRef[socket.hash]].messages);
       
     });
@@ -207,7 +219,6 @@ const setupSockets = (ioServer) => {
           rooms[keys[i]].currentQuestion.time -= 500;
           //io.to(keys[i]).emit('timerUpdate', rooms[keys[i]].currentQuestion.time);
           if (rooms[keys[i]].currentQuestion.time === 0) {
-            console.log('question time limit reached');
             // questions time has run out, send the owner of the question to the results page
             // add the question asker to a unique room, and remove them from the room they are in
             //check if there is any messages to get for a summary

@@ -13,11 +13,16 @@ const init = () =>{
     socket.on('resetQuestion', resetQuestion);
     socket.on('queueUpdate', queueDisplay);
     socket.on('summary', fullSummary);
+    socket.on('clockExtension', clockExtension);
     $('#math').click(()=>{changeRoom('math')});
     $('#code').click(()=>{changeRoom('code')});
     $('#science').click(()=>{changeRoom('science')});
     $('#askButton').click(()=>{modal(true)});
     $('#modal-submit').click(sendQuestion);
+    $('#extend-clock').click(extendClock);
+    $('#account-link').click(()=>{
+        window.location.replace(`/account`);
+    });
     
     $(window).click((e)=>{
         if(e.target.id === 'Modal'){

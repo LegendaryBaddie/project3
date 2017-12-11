@@ -5,25 +5,28 @@
   <link rel="stylesheet" href="../assets/css/style.css">
   <script src="https://code.jquery.com/jquery-2.1.3.min.js"></script>
   <script src="/socket.io/socket.io.js"></script>
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans|Permanent+Marker" rel="stylesheet">
   </head>
   <body>
     <nav id="fixed-top">
       {{#if account}}
-        <a href="/logout">Log Out</a>
+        <h2>Hello </h2><h1 id="account-link">{{{account}}}</h1>
+        <a id="logout" href="/logout">Log Out</a>
       {{else}}
          <section id="login">
             <form id="loginForm" name="loginForm" action="/login" method="POST" class="mainForm">
               <label for="userL">Username: </label>
               <input id="userL" type="text" name="username" placeholder="username"/>
               <label for="passL">Password: </label>
-              <input id="passL" type="text" name="password" placeholder="password"/>
+              <input id="passL" type="password" name="password" placeholder="password"/>
               <input type="hidden" name="_csrf" value={{csrfToken}} />
               <a id="loginSubmit" href="#" class="formSubmit">Sign in</a>
+              <a href="/signup">Sign up</a>
             </form>
-            <a href="/signup">Sign up</a>
           </section>
       {{/if}}
     </nav>
+    
     <div id="side-capsule">
       <div class="chat-tab" id="math"><h2>Math</h2></div>
       <div class="chat-tab" id="code"><h2>Code</h2></div>
@@ -33,10 +36,12 @@
       <div id="askButton"><h2>Ask A Question!</h2></div>
       </div>
     </div>
+    
     <div id="Modal">
       <div id="modal-content">
         <div id="modal-summary">
           <h1>Your question in review!</h1>
+          <h2>Highest Merit Answers:</h2>
           <div id="modal-summary-best"></div>
           <h2>All Messages:</h2>
           <div id="modal-summary-messages"></div>
@@ -53,9 +58,10 @@
     <script>
     //serverside variables
     {{#if account}}
-   const account = {{{account}}};
+   const account = "{{{account}}}";
 
    {{/if}}
+   
   </script>
   <script src="/assets/js/compiled.js"></script>
   </html>

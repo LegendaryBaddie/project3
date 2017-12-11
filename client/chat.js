@@ -1,3 +1,4 @@
+
 const onMessage = (data) => {
     let message = `<h3>${data.name}</h3>`;
     message += `<p>${data.content}</p>`;
@@ -27,6 +28,14 @@ const sendQuestion = () =>{
     $('#modal-question').val('');
     socket.emit('newQuestion', question);
 }
+const extendClock = () => {
+    if(clock>5){
+    socket.emit('extendClock');
+    }
+}
+const clockExtension = () => {
+    clock+= 60;
+}
 const resetQuestion = () => {
     $('#the-question').html("Waiting for a Question");
     $('#clock').html('0:00');
@@ -49,9 +58,18 @@ const fullSummary = (data) =>{
     $('#modal-summary-messages').empty();
     //check for #1 post
     let keys = Object.keys(data.messages);
+    let hKeys = Object.keys(data.highestMessage);
+    //at least two messages with the same merit count
     if(data.highestMessage !== undefined){
-    $('#modal-summary-best').html(`<h2>Your highest rated answer</h2><div id=best class=message><div class=content>
-    <h3>${data.highestMessage.name}</h3><p>${data.highestMessage.content}</p></div></div>`);
+    if(hKeys.length>1){
+        for(let k=0; k< hKeys.length; k++){
+            $('#modal-summary-best').append(`<div class=message><div class=content>
+            <h3>${data.highestMessage[hKeys[k]].name}</h3><p>${data.highestMessage[hKeys[k]].content}</p></div></div>`);
+        }
+    }else{
+    $('#modal-summary-best').html(`<h2>Your highest rated answer</h2><div class=message><div class=content>
+    <h3>${data.highestMessage[hKeys[0]].name}</h3><p>${data.highestMessage[hkeys[0]].content}</p></div></div>`);
+    }
     }
     for(let i=0;i<keys.length;i++){
     let message = `<h3>${data.messages[keys[i]].name}</h3>`;
@@ -131,6 +149,7 @@ $('#true-message-field').focusin((e) => {
                 message: $('#true-message-field').val(),
                 name: account
             };
+            $('#true-message-field').empty();
             $('#true-message-field').val("");
             socket.emit('newMessage', data);
         }

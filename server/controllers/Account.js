@@ -7,7 +7,7 @@ const signupPage = (req, res) => {
 };
 const logout = (req, res) => {
   req.session.destroy();
-  return res.json({ redirect: '/' });
+  return res.redirect('/');
 };
 
 const login = (request, response) => {
@@ -31,6 +31,31 @@ const login = (request, response) => {
     return res.json({ redirect: '/chat' });
   });
 };
+
+const checkAccount = (req,res) => {
+  Account.AccountModel.findByUsername(req.session.account.username, (err, doc) => {
+    if (err) {
+      console.log(err);
+    }
+    if (doc) {
+      if(doc.premium){
+      return res.render('account', {
+        account: req.session.account.username,
+        csrfToken: req.csrfToken(),
+        merits: doc.merits,
+        premium
+      });
+    }else{
+      return res.render('account', {
+        account: req.session.account.username,
+        csrfToken: req.csrfToken(),
+        merits: doc.merits,
+      });
+    }
+    }
+  });
+}
+
 const signup = (request, response) => {
   const req = request;
   const res = response;
@@ -60,7 +85,7 @@ const signup = (request, response) => {
 
       req.session.account = Account.AccountModel.toAPI(newAccount);
       //
-      return res.redirect('/chat');
+      return res.json({ redirect: '/chat' });
     });
   });
 };
@@ -78,6 +103,10 @@ const updateMerits = (account, meritInc) => {
       return;
     }
     const acc = doc;
+    //if the transaction would make the merits negative
+    if(acc.merits + meritInc <0){
+      return false;
+    }
     //increase merits by the amount they had on the message;
     acc.merits += meritInc;
     //save the data back to the database
@@ -94,3 +123,4 @@ module.exports.logout = logout;
 module.exports.signup = signup;
 module.exports.signupPage = signupPage;
 module.exports.updateMerits = updateMerits;
+module.exports.checkAccount = checkAccount;

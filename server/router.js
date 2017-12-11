@@ -8,6 +8,8 @@ const router = (app) => {
   app.get('/logout', mid.requiresLogin, controllers.Account.logout);
   app.get('/chat', mid.requiresSecure, mid.requiresLogin, controllers.Pages.chat);
   app.get('/', mid.requiresSecure, controllers.Pages.index);
+  app.get('/index', mid.requiresSecure, controllers.Pages.index);
+  app.get('/account', mid.requiresSecure, mid.requiresLogin, controllers.Account.checkAccount);
 };
 
 module.exports = router;
