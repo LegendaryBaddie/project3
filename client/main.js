@@ -2,6 +2,7 @@ let timer;
 let clock = 0;
 let socket;
 let messages = {};
+let scrollSum = 0;
 // set up states for the room you are in can be
 // not joined, question in progress, no question
 

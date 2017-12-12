@@ -82,28 +82,26 @@ const addToQueue = (data, socket) => {
 };
 
 const generateSummary = (room) => {
-  //highest rated message
-  let highestMerit = 0;
-  let highestMessage = {};
-  let messageKeys = Object.keys(rooms[room].messages);
-  for(let i=0; i<messageKeys.length; i++){
-    if(rooms[room].messages[messageKeys[i]].stars >= highestMerit)
-    {
+  // highest rated message
+  const highestMerit = 0;
+  const highestMessage = {};
+  const messageKeys = Object.keys(rooms[room].messages);
+  for (let i = 0; i < messageKeys.length; i++) {
+    if (rooms[room].messages[messageKeys[i]].stars >= highestMerit) {
       highestMessage[i] = rooms[room].messages[messageKeys[i]];
-    } 
-
+    }
   }
-  //if no one upvoted at all
-  if(highestMessage === 0){
+  // if no one upvoted at all
+  if (highestMessage === 0) {
     return rooms[room].messages;
-  }else{
-    let data = {
-      highestMessage,
-      messages: rooms[room].messages
-    };
-    return data;
   }
-  //all messages
+  const data = {
+    highestMessage,
+    messages: rooms[room].messages,
+  };
+  return data;
+
+  // all messages
 };
 
 const setupSockets = (ioServer) => {
@@ -131,47 +129,43 @@ const setupSockets = (ioServer) => {
       // send them the messages and questions;
       if (rooms[sockRef[socket.hash]].currentQuestion !== undefined) {
         socket.emit('newQuestion', rooms[sockRef[socket.hash]].currentQuestion);
-        if(rooms[sockRef[socket.hash]].messages !== undefined){
+        if (rooms[sockRef[socket.hash]].messages !== undefined) {
           socket.emit('allMessages', rooms[sockRef[socket.hash]].messages);
         }
       }
     });
-    socket.on('extendClock',(data) =>{
-      //if the doesnt owns the question
-      if(socket.hash !== rooms[sockRef[socket.hash]].currentQuestion.id)
-      {
+    socket.on('extendClock', (data) => {
+      // if the doesnt owns the question
+      if (socket.hash !== rooms[sockRef[socket.hash]].currentQuestion.id) {
         return;
       }
-      //return if the user doesnt have enough merits
-      if(controllers.Account.updateMerits(data, -100))
-      {
-        rooms[sockRef[socket.hash]].currentQuestion.time +=60000;
+      // return if the user doesnt have enough merits
+      if (controllers.Account.checkMerits(data) >= 100) {
+        controllers.Account.updateMerits(data, -100);
+        rooms[sockRef[socket.hash]].currentQuestion.time += 60000;
         io.to(sockRef[socket.hash]).emit('clockExtension');
       }
     });
     socket.on('addMerit', (data) => {
       // data coming is the message id
       // check to see if the message even exists
-      if(!rooms[sockRef[socket.hash]].messages[data])
-      {
+      if (!rooms[sockRef[socket.hash]].messages[data]) {
         return;
       }
-    
-      if(rooms[sockRef[socket.hash]].messages[data].hasUpvoted[socket.hash])
-      {
+
+      if (rooms[sockRef[socket.hash]].messages[data].hasUpvoted[socket.hash]) {
         return;
       }
       rooms[sockRef[socket.hash]].messages[data].hasUpvoted[socket.hash] = socket.hash;
-      rooms[sockRef[socket.hash]].messages[data].stars ++;
+      rooms[sockRef[socket.hash]].messages[data].stars++;
       io.to(sockRef[socket.hash]).emit('allMessages', rooms[sockRef[socket.hash]].messages);
-      
     });
     socket.on('newQuestion', (data) => {
       // add question to queue
       addToQueue(data, socket);
       // update questions in queue
 
-      io.to(sockRef[socket.hash]).emit('queueUpdate', rooms[sockRef[socket.hash]].questions.length); 
+      io.to(sockRef[socket.hash]).emit('queueUpdate', rooms[sockRef[socket.hash]].questions.length);
     });
     socket.on('newMessage', (data) => {
       // create unique id for the message
@@ -203,50 +197,51 @@ const setupSockets = (ioServer) => {
 
     for (let i = 0; i < keys.length; i++) {
       // no question so nothing needs to be done
-        // no question is active
-
-        if (rooms[keys[i]].currentQuestion === undefined && rooms[keys[i]].questions[0] !== undefined) {
+      // no question is active
+      if (rooms[keys[i]].currentQuestion === undefined
+                && rooms[keys[i]].questions[0] !== undefined) {
         // set a new active question
         // remove current question from queue
-          const eslintworkaround = 0;
-          rooms[keys[i]].currentQuestion = rooms[keys[i]].questions.splice(0, 1)[eslintworkaround];
-          //update client questoin queue
-          io.to(keys[i]).emit('queueUpdate', 0);
-          // emit new question to clients in this room
-          io.to(keys[i]).emit('newQuestion', rooms[keys[i]].currentQuestion);
-        } else if (rooms[keys[i]].currentQuestion != undefined){
+        const eslintworkaround = 0;
+        rooms[keys[i]].currentQuestion = rooms[keys[i]].questions.splice(0, 1)[eslintworkaround];
+        // update client questoin queue
+        io.to(keys[i]).emit('queueUpdate', 0);
+        // emit new question to clients in this room
+        io.to(keys[i]).emit('newQuestion', rooms[keys[i]].currentQuestion);
+      } else if (rooms[keys[i]].currentQuestion !== undefined) {
         // increment the internal clock for the question
-          rooms[keys[i]].currentQuestion.time -= 500;
-          //io.to(keys[i]).emit('timerUpdate', rooms[keys[i]].currentQuestion.time);
-          if (rooms[keys[i]].currentQuestion.time === 0) {
-            // questions time has run out, send the owner of the question to the results page
-            // add the question asker to a unique room, and remove them from the room they are in
-            //check if there is any messages to get for a summary
-            if(rooms[keys[i]].messages !== undefined){
-            let summary = generateSummary(keys[i]);
+        rooms[keys[i]].currentQuestion.time -= 500;
+        // io.to(keys[i]).emit('timerUpdate', rooms[keys[i]].currentQuestion.time);
+        if (rooms[keys[i]].currentQuestion.time === 0) {
+          // questions time has run out, send the owner of the question to the results page
+          // add the question asker to a unique room, and remove them from the room they are in
+          // check if there is any messages to get for a summary
+          if (rooms[keys[i]].messages !== {}) {
+            const summary = generateSummary(keys[i]);
             io.to(rooms[keys[i]].currentQuestion.id).emit('summary', summary);
           }
-          
-            // save all the merits of each message to its owner.
-            const messageKeys = Object.keys(rooms[keys[i]].messages);
-            for(let k=0;k<messageKeys.length;k++){
-              //if the message has merits to add
-              if(rooms[keys[i]].messages[messageKeys[k]].stars > 0)
-              {
-                controllers.Account.updateMerits(rooms[keys[i]].messages[messageKeys[k]].name,
-                   rooms[keys[i]].messages[messageKeys[k]].stars);
-              }
+
+          // save all the merits of each message to its owner.
+          const messageKeys = Object.keys(rooms[keys[i]].messages);
+          for (let k = 0; k < messageKeys.length; k++) {
+            // if the message has merits to add
+            if (rooms[keys[i]].messages[messageKeys[k]].stars > 0) {
+              controllers.Account.updateMerits(
+                rooms[keys[i]].messages[messageKeys[k]].name,
+                rooms[keys[i]].messages[messageKeys[k]].stars,
+              );
             }
-            // clear the messages object
-            rooms[keys[i]].messages = {};
-            // load a different question to everyone in the room that isnt the owner.
-            // we can do this by just setting current question to null
-            rooms[keys[i]].currentQuestion = undefined;
-            //update queue
-            io.to(keys[i]).emit('queueUpdate', rooms[keys[i]].questions.length)
-            // tell the clients to reset their question and time
-            io.to(keys[i]).emit('resetQuestion');
           }
+          // clear the messages object
+          rooms[keys[i]].messages = {};
+          // load a different question to everyone in the room that isnt the owner.
+          // we can do this by just setting current question to null
+          rooms[keys[i]].currentQuestion = undefined;
+          // update queue
+          io.to(keys[i]).emit('queueUpdate', rooms[keys[i]].questions.length);
+          // tell the clients to reset their question and time
+          io.to(keys[i]).emit('resetQuestion');
+        }
       }
     }
   }, 500);

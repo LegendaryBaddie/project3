@@ -200,7 +200,10 @@ font-size: 30pt;
 }
 #modal-submit{
     border: 1px solid #000;
-    padding: 10px;
+    padding: 4px;
+    height: 50px;
+    box-sizing:border-box;
+    margin-top: 14px;
 }
 #modal-summary{
     display: none;
@@ -211,14 +214,14 @@ font-size: 30pt;
 }
 #modal-summary-best{
     overflow: scroll;
-    height:200px;
+    height:150px;
     width:60%;
     margin:auto;
     border: 2px solid palevioletred;
 }
 #modal-summary-messages{
     overflow: scroll;
-    height:200px;
+    height:15f0px;
     width:60%;
     margin:auto;
     border:1px solid paleturquoise;
@@ -226,7 +229,19 @@ font-size: 30pt;
 #modal-inner-content{
     display:none;
     margin:auto;
-    width: fit-content;
+    width: 100%;
+    height:400px;
+    text-align:center;
+}
+#modal-inner-content h1 {
+    text-align: center;
+    margin: 10px;
+}
+#modal-question{
+    display:block;
+    width: 500px;
+    height: 80px;
+    margin:auto;
 }
 #askButton{
     display:none;
@@ -253,8 +268,8 @@ font-size: 30pt;
     width:10%;
     height:90%;
     border: solid 1px rgb(77, 128, 77);
-    border-radius: 15px;
-    background:palegreen;
+    border-radius: 5px;
+    background:aquamarine;
     right:0px;
     margin-top:4px;
     margin-right: 5px;
@@ -263,12 +278,12 @@ font-size: 30pt;
 }
 .merit > h3{
     text-align: center;
-    margin-top:10px;
+    margin-top:25px;
 }
 .merit:hover{
     border: solid 1px palegreen;
     border-radius: 20px;
-    background:rgb(77, 128, 77);
+    background:rgb(102, 206, 169);
 }
 .merit:active{
     border: solid 1px rgb(77, 128, 77);
@@ -322,7 +337,11 @@ main{
     box-sizing: border-box;
 }
 #the-question{
-    margin-top: 30px;
+    display:block;
+    width:80%;
+    margin:auto;
+    margin-top:20px;
+    word-wrap: break-word;
 }
 #clock{
     margin-top:30px;
@@ -376,8 +395,7 @@ main{
 }
 .message{
     position:relative;
-    min-height:100px;
-    height:auto;
+    height:100px;
     width:99%;
     border-bottom:2px solid paleturquoise;
     text-align: left;

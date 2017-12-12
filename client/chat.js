@@ -1,18 +1,21 @@
 
 const onMessage = (data) => {
-    let message = `<h3>${data.name}</h3>`;
+    let message = `<h2>${data.name}</h2>`;
     message += `<p>${data.content}</p>`;
     $('#chat-container').append(`<div class=message><div class=content>${message}</div><div class=merit onClick=sendMerit(this) id=${data.id}><h3>${data.stars}</h3></div></div>`);
     messages[data.id]= data;
-    
+    scrollSum += 100;
+    $('#chat-container').scrollTop(scrollSum);
 } 
 const setQuestion = (data) => {
     $('#the-question').html(data.content);
     newTimer(data.time);
     $('#true-message-field').removeAttr('disabled');
+    scrollSum = 0;
+    $('#chat-container').empty();
 }
 const queueDisplay = (data) => {
-    $('#queue-count').html(`Questions in Queue:${data}`);
+    $('#queue-count').html(`Questions in Queue: ${data}`);
 }
 const sendMerit = (data) => {
     //check if the person clicking owns the message
@@ -37,9 +40,10 @@ const clockExtension = () => {
     clock+= 60;
 }
 const resetQuestion = () => {
-    $('#the-question').html("Waiting for a Question");
+    $('#the-question').html("No Question Asked");
     $('#clock').html('0:00');
-    $('#chat-containter').empty();
+    $('#chat-container').empty();
+    scrollSum = 0;
     // disable sending messages 
     $('#true-message-field').attr('disabled', 'true');
 }
@@ -86,6 +90,7 @@ const newTimer = (length) => {
 const setRoomMessages = (data) => {
     //clear all messsages first
     $('#chat-container').empty();
+    scrollSum = 0;
     messages = {};
  let keys = Object.keys(data);
  for(let i = 0; i < keys.length; i++){
